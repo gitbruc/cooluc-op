@@ -230,8 +230,8 @@ EOF
 [ "$(whoami)" = "runner" ] && endgroup
 
 # 删除重复的软件包
-rm -rf /feeds/immortal/applications/{luci-app-accesscontrol,luci-app-airplay2,luci-app-alist,luci-app-argon-config,luci-app-autoreboot,luci-app-cpufreq,luci-app-daed,luci-app-diskman,luci-app-eqos,luci-app-filebrowser,luci-app-mentohust,luci-app-netdata,luci-app-passwall,luci-app-qbittorrent,luci-app-ramfree,luci-app-socat,luci-app-unblockneteasemusic,luci-app-usb-printer,luci-app-vlmcsd,luci-app-zerotier}
-rm -rf /feeds/immortal/themes/luci-theme-argon
+rm -rf $PWD/feeds/immortal/applications/{luci-app-accesscontrol,luci-app-airplay2,luci-app-alist,luci-app-argon-config,luci-app-autoreboot,luci-app-cpufreq,luci-app-daed,luci-app-diskman,luci-app-eqos,luci-app-filebrowser,luci-app-mentohust,luci-app-netdata,luci-app-passwall,luci-app-qbittorrent,luci-app-ramfree,luci-app-socat,luci-app-unblockneteasemusic,luci-app-usb-printer,luci-app-vlmcsd,luci-app-zerotier}
+rm -rf $PWD/feeds/immortal/themes/luci-theme-argon
 
 # 安装 feeds
 [ "$(whoami)" = "runner" ] && group "feeds install -a"
