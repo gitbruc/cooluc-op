@@ -133,7 +133,7 @@ if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
 elif [ "$platform" = "bcm53xx" ]; then
     echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
-    [ -z "$LAN" ] && export LAN="192.168.1.1"
+    [ "$LAN" = "10.0.0.1" ] && export LAN="192.168.1.1"
 elif [ "$platform" = "rk3568" ]; then
     echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
     [ "$1" = "rc2" ] && model="nanopi-r5s"
@@ -221,6 +221,7 @@ src-git packages https://$github/openwrt/packages.git$packages
 src-git luci https://$github/openwrt/luci.git$luci
 src-git routing https://$github/openwrt/routing.git$routing
 src-git telephony https://$github/openwrt/telephony.git$telephony
+src-git immortal https://$github.com/immortalwrt/luci.git$immortal
 EOF
 
 # Init feeds
