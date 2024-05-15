@@ -221,7 +221,7 @@ src-git packages https://$github/openwrt/packages.git$packages
 src-git luci https://$github/openwrt/luci.git$luci
 src-git routing https://$github/openwrt/routing.git$routing
 src-git telephony https://$github/openwrt/telephony.git$telephony
-src-git immortal https://$github.com/immortalwrt/luci.git$immortal
+src-git immortal https://$github/immortalwrt/luci.git$immortal
 EOF
 
 # Init feeds
