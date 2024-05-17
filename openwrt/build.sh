@@ -392,7 +392,7 @@ fi
 # Compile
 if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     echo -e "\r\n${GREEN_COLOR}Building Toolchain ...${RES}\r\n"
-    make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s || exit 1
+    make -j$(nproc) toolchain/compile || make -j$(nproc) toolchain/compile V=s || exit 1
     mkdir -p toolchain-cache
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
     if [ "$USE_GCC13" = "y" ]; then
@@ -409,7 +409,7 @@ else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
     sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
     sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
-    make -j$cores IGNORE_ERRORS="n m"
+    make -j$(nproc) IGNORE_ERRORS="n m"
 fi
 
 # Compile time
