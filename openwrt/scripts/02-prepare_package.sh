@@ -94,7 +94,7 @@ rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
 # ddns-go
-git clone https://$github/sirpdboy/luci-app-ddns-go package/new/helloworld
+git clone https://$github/sirpdboy/luci-app-ddns-go package/new/ddnsgogo
 
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
