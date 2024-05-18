@@ -1,3 +1,4 @@
+cd openwrt
 #!/bin/bash -e
 export RED_COLOR='\e[1;31m'
 export GREEN_COLOR='\e[1;32m'
