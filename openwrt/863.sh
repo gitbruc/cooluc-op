@@ -22,14 +22,11 @@ elif [ "$1" = "rc2" ]; then
     export toolchain_version=openwrt-23.05
 fi
 
+# lan
+[ -n "$LAN" ] && export LAN=$LAN || export LAN=10.0.0.1
+
 # platform
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
-
-# print version
-echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
-if [ "$platform" = "x86_64" ]; then
-    echo -e "${GREEN_COLOR}Model: x86_64${RES}"
-fi
 
 # gcc13 & 14 & 15
 if [ "$USE_GCC13" = y ]; then
@@ -55,16 +52,18 @@ export ENABLE_LRNG=$ENABLE_LRNG
 # kernel build with clang lto
 export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
 
-# 安装 feeds
-[ "$(whoami)" = "runner" ] && group "feeds install -a"
-./scripts/feeds install -a
-[ "$(whoami)" = "runner" ] && endgroup
-
-# loader dl
-if [ -f ../dl.gz ]; then
-    tar xf ../dl.gz -C .
+# print version
+echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
+if [ "$platform" = "x86_64" ]; then
+    echo -e "${GREEN_COLOR}Model: x86_64${RES}"
 fi
+curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
+kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
+kmodpkg_name=$(echo $(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}')-1-$(echo $kmod_hash))
+echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
+rm -f kernel.txt
 
+echo -e "${GREEN_COLOR}Date: $CURRENT_DATE${RES}\r\n"
 
 if [ "$USE_GCC13" = "y" ]; then
     echo -e "${GREEN_COLOR}GCC VERSION: 13${RES}"
@@ -84,7 +83,6 @@ fi
 [ "$BUILD_FAST" = "y" ] && echo -e "${GREEN_COLOR}BUILD_FAST: true${RES}" || echo -e "${GREEN_COLOR}BUILD_FAST: false${RES}"
 [ "$MINIMAL_BUILD" = "y" ] && echo -e "${GREEN_COLOR}MINIMAL_BUILD: true${RES}" || echo -e "${GREEN_COLOR}MINIMAL_BUILD: false${RES}"
 [ "$KERNEL_CLANG_LTO" = "y" ] && echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: true${RES}\r\n" || echo -e "${GREEN_COLOR}KERNEL_CLANG_LTO: false${RES}\r\n"
-
 
 
 
