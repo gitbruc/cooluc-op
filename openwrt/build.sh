@@ -127,6 +127,9 @@ export ENABLE_LRNG=$ENABLE_LRNG
 # kernel build with clang lto
 export KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO
 
+# bpf
+export ENABLE_BPF=$ENABLE_BPF
+
 # print version
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
@@ -305,7 +308,6 @@ fi
 [ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
 # bpf
-export ENABLE_BPF=$ENABLE_BPF
 [ "$ENABLE_BPF" = "y" ] && curl -s https://$mirror/openwrt/generic/config-bpf >> .config
 
 # LTO
