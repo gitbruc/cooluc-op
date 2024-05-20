@@ -119,7 +119,7 @@ end_seconds=$(date --date="$endtime" +%s);
 SEC=$((end_seconds-start_seconds));
 
 if [ "$platform" = "x86_64" ]; then
-    if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
+    if [ -f bin/targets/x86/64*/*-squashfs-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         if [ "$ALL_KMODS" = y ]; then
