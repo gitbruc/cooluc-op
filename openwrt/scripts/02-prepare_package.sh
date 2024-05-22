@@ -93,8 +93,14 @@ git clone https://github.com/sbwml/package_new_nethogs package/new/nethogs
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
+# autotimeset
+git clone https://github.com/sirpdboy/luci-app-autotimeset.git package/new/luci-app-autotimeset
+
 # ddns-go
 git clone https://$github/sirpdboy/luci-app-ddns-go package/new/ddnsgogo
+
+# eqosplus
+git clone https://github.com/sirpdboy/luci-app-eqosplus.git package/new/luci-app-eqosplus
 
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
