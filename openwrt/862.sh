@@ -6,9 +6,83 @@ export BLUE_COLOR='\e[1;34m'
 export PINK_COLOR='\e[1;35m'
 export SHAN='\e[1;33;5m'
 export RES='\e[0m'
-export mirror=raw.githubusercontent.com/gitbruc/cooluc-op/master
+
+GROUP=
+group() {
+    endgroup
+    echo "::group::  $1"
+    GROUP=1
+}
+endgroup() {
+    if [ -n "$GROUP" ]; then
+        echo "::endgroup::"
+    fi
+    GROUP=
+}
+
+#####################################
+#  NanoPi R4S OpenWrt Build Script  #
+#####################################
+
+# IP Location
+ip_info=`curl -s https://ip.cooluc.com`;
+export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'`;
+
+# script url
+if [ "$isCN" = "CN" ]; then
+    export mirror=raw.githubusercontent.com/gitbruc/cooluc-op/master
+else
+    export mirror=raw.githubusercontent.com/gitbruc/cooluc-op/master
+fi
+
+# github actions - automatically retrieve `github raw` links
+if [ "$(whoami)" = "runner" ] && [ -n "$GITHUB_REPO" ]; then
+    export mirror=raw.githubusercontent.com/$GITHUB_REPO/master
+fi
+
+# private gitea
 export gitea=git.cooluc.com
-export github="github.com"
+
+# github mirror
+if [ "$isCN" = "CN" ]; then
+    export github="github.com"
+else
+    export github="github.com"
+fi
+
+# Check root
+if [ "$(id -u)" = "0" ]; then
+    echo -e "${RED_COLOR}Building with root user is not supported.${RES}"
+    exit 1
+fi
+
+# Start time
+starttime=`date +'%Y-%m-%d %H:%M:%S'`
+CURRENT_DATE=$(date +%s)
+
+# Cpus
+cores=`expr $(nproc --all) + 1`
+
+# $CURL_BAR
+if curl --help | grep progress-bar >/dev/null 2>&1; then
+    CURL_BAR="--progress-bar";
+fi
+
+if [ -z "$1" ] || [ "$2" != "nanopi-r4s" -a "$2" != "nanopi-r5s" -a "$2" != "x86_64" -a "$2" != "netgear_r8500" -a "$2" != "armv8" ]; then
+    echo -e "\n${RED_COLOR}Building type not specified.${RES}\n"
+    echo -e "Usage:\n"
+    echo -e "nanopi-r4s releases: ${GREEN_COLOR}bash build.sh rc2 nanopi-r4s${RES}"
+    echo -e "nanopi-r4s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r4s${RES}"
+    echo -e "nanopi-r5s releases: ${GREEN_COLOR}bash build.sh rc2 nanopi-r5s${RES}"
+    echo -e "nanopi-r5s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r5s${RES}"
+    echo -e "x86_64 releases: ${GREEN_COLOR}bash build.sh rc2 x86_64${RES}"
+    echo -e "x86_64 snapshots: ${GREEN_COLOR}bash build.sh dev x86_64${RES}"
+    echo -e "netgear-r8500 releases: ${GREEN_COLOR}bash build.sh rc2 netgear_r8500${RES}"
+    echo -e "netgear-r8500 snapshots: ${GREEN_COLOR}bash build.sh dev netgear_r8500${RES}"
+    echo -e "armsr-armv8 releases: ${GREEN_COLOR}bash build.sh rc2 armv8${RES}"
+    echo -e "armsr-armv8 snapshots: ${GREEN_COLOR}bash build.sh dev armv8${RES}\n"
+    exit 1
+fi
 
 # Source branch
 if [ "$1" = "dev" ]; then
@@ -26,7 +100,11 @@ fi
 [ -n "$LAN" ] && export LAN=$LAN || export LAN=10.0.0.1
 
 # platform
+[ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
+[ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
+[ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="bcm53xx"
+[ "$2" = "armv8" ] && export platform="armv8" toolchain_arch="armsr-armv8"
 
 # gcc13 & 14 & 15
 if [ "$USE_GCC13" = y ]; then
@@ -59,6 +137,18 @@ export ENABLE_BPF=$ENABLE_BPF
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
+elif [ "$platform" = "armv8" ]; then
+    echo -e "${GREEN_COLOR}Model: armsr/armv8${RES}"
+    [ "$1" = "rc2" ] && model="armv8"
+elif [ "$platform" = "bcm53xx" ]; then
+    echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
+    [ "$LAN" = "10.0.0.1" ] && export LAN="192.168.1.1"
+elif [ "$platform" = "rk3568" ]; then
+    echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
+    [ "$1" = "rc2" ] && model="nanopi-r5s"
+else
+    echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
+    [ "$1" = "rc2" ] && model="nanopi-r4s"
 fi
 curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
 kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')
@@ -115,7 +205,7 @@ bash 00-prepare_base.sh
 bash 02-prepare_package.sh
 bash 03-convert_translation.sh
 bash 05-fix-source.sh
-if [ "$platform" = "x86_64" ]; then
+if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3399" ] || [ "$platform" = "x86_64" ] || [ "$platform" = "bcm53xx" ] || [ "$platform" = "armv8" ]; then
     bash 01-prepare_base-mainline.sh
     bash 04-fix_kmod.sh
 fi
@@ -133,14 +223,29 @@ rm -rf ../master
 if [ "$platform" = "x86_64" ]; then
     curl -s https://$mirror/openwrt/23-config-musl-x86 > .config
     ALL_KMODS=y
+elif [ "$platform" = "bcm53xx" ]; then
+    if [ "$MINIMAL_BUILD" = "y" ]; then
+        curl -s https://$mirror/openwrt/23-config-musl-r8500-minimal > .config
+    else
+        curl -s https://$mirror/openwrt/23-config-musl-r8500 > .config
+    fi
+    ALL_KMODS=y
+elif [ "$platform" = "rk3568" ]; then
+    curl -s https://$mirror/openwrt/23-config-musl-r5s > .config
+    ALL_KMODS=y
+elif [ "$platform" = "armv8" ]; then
+    curl -s https://$mirror/openwrt/23-config-musl-armsr-armv8 > .config
+    ALL_KMODS=y
+else
+    curl -s https://$mirror/openwrt/23-config-musl-r4s > .config
 fi
 
 # config-common
 if [ "$MINIMAL_BUILD" = "y" ]; then
-    curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
+    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-minimal-common >> .config
     echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
 else
-    curl -s https://$mirror/openwrt/23-config-common >> .config
+    [ "$platform" != "bcm53xx" ] && curl -s https://$mirror/openwrt/23-config-common >> .config
 fi
 
 # ota
@@ -192,6 +297,9 @@ fi
 # uhttpd
 [ "$ENABLE_UHTTPD" = "y" ] && sed -i '/nginx/d' .config && echo 'CONFIG_PACKAGE_ariang=y' >> .config
 
+# bcm53xx: upx_list.txt
+# [ "$platform" = "bcm53xx" ] && curl -s https://$mirror/openwrt/generic/upx_list.txt > upx_list.txt
+
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
     [ "$USE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
@@ -211,7 +319,7 @@ if [ "$BUILD_FAST" = "y" ]; then
     elif [ "$USE_GCC15" = "y" ]; then
         curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_15.tar.gz -o toolchain.tar.gz $CURL_BAR
     else
-        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch".tar.gz -o toolchain.tar.gz $CURL_BAR
+        curl -L "$TOOLCHAIN_URL"/toolchain_"$LIBC"_"$toolchain_arch"_11.tar.gz -o toolchain.tar.gz $CURL_BAR
     fi
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -zxf toolchain.tar.gz && rm -f toolchain.tar.gz

@@ -68,11 +68,19 @@ if curl --help | grep progress-bar >/dev/null 2>&1; then
     CURL_BAR="--progress-bar";
 fi
 
-if [ -z "$1" ] || [ "$2" != "x86_64" ]; then
+if [ -z "$1" ] || [ "$2" != "nanopi-r4s" -a "$2" != "nanopi-r5s" -a "$2" != "x86_64" -a "$2" != "netgear_r8500" -a "$2" != "armv8" ]; then
     echo -e "\n${RED_COLOR}Building type not specified.${RES}\n"
     echo -e "Usage:\n"
+    echo -e "nanopi-r4s releases: ${GREEN_COLOR}bash build.sh rc2 nanopi-r4s${RES}"
+    echo -e "nanopi-r4s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r4s${RES}"
+    echo -e "nanopi-r5s releases: ${GREEN_COLOR}bash build.sh rc2 nanopi-r5s${RES}"
+    echo -e "nanopi-r5s snapshots: ${GREEN_COLOR}bash build.sh dev nanopi-r5s${RES}"
     echo -e "x86_64 releases: ${GREEN_COLOR}bash build.sh rc2 x86_64${RES}"
-    echo -e "x86_64 snapshots: ${GREEN_COLOR}bash build.sh dev x86_64${RES}\n"
+    echo -e "x86_64 snapshots: ${GREEN_COLOR}bash build.sh dev x86_64${RES}"
+    echo -e "netgear-r8500 releases: ${GREEN_COLOR}bash build.sh rc2 netgear_r8500${RES}"
+    echo -e "netgear-r8500 snapshots: ${GREEN_COLOR}bash build.sh dev netgear_r8500${RES}"
+    echo -e "armsr-armv8 releases: ${GREEN_COLOR}bash build.sh rc2 armv8${RES}"
+    echo -e "armsr-armv8 snapshots: ${GREEN_COLOR}bash build.sh dev armv8${RES}\n"
     exit 1
 fi
 
@@ -92,7 +100,11 @@ fi
 [ -n "$LAN" ] && export LAN=$LAN || export LAN=10.0.0.1
 
 # platform
+[ "$2" = "nanopi-r4s" ] && export platform="rk3399" toolchain_arch="nanopi-r4s"
+[ "$2" = "nanopi-r5s" ] && export platform="rk3568" toolchain_arch="nanopi-r5s"
 [ "$2" = "x86_64" ] && export platform="x86_64" toolchain_arch="x86_64"
+[ "$2" = "netgear_r8500" ] && export platform="bcm53xx" toolchain_arch="bcm53xx"
+[ "$2" = "armv8" ] && export platform="armv8" toolchain_arch="armsr-armv8"
 
 # gcc13 & 14 & 15
 if [ "$USE_GCC13" = y ]; then
@@ -125,6 +137,18 @@ export ENABLE_BPF=$ENABLE_BPF
 echo -e "\r\n${GREEN_COLOR}Building $branch${RES}\r\n"
 if [ "$platform" = "x86_64" ]; then
     echo -e "${GREEN_COLOR}Model: x86_64${RES}"
+elif [ "$platform" = "armv8" ]; then
+    echo -e "${GREEN_COLOR}Model: armsr/armv8${RES}"
+    [ "$1" = "rc2" ] && model="armv8"
+elif [ "$platform" = "bcm53xx" ]; then
+    echo -e "${GREEN_COLOR}Model: netgear_r8500${RES}"
+    [ "$LAN" = "10.0.0.1" ] && export LAN="192.168.1.1"
+elif [ "$platform" = "rk3568" ]; then
+    echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
+    [ "$1" = "rc2" ] && model="nanopi-r5s"
+else
+    echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
+    [ "$1" = "rc2" ] && model="nanopi-r4s"
 fi
 curl -s https://$mirror/tags/kernel-6.6 > kernel.txt
 kmod_hash=$(grep HASH kernel.txt | awk -F'HASH-' '{print $2}' | awk '{print $1}' | md5sum | awk '{print $1}')

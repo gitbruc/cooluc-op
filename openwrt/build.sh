@@ -238,10 +238,16 @@ EOF
 ./scripts/feeds update -a
 [ "$(whoami)" = "runner" ] && endgroup
 
-
 # 删除重复的软件包
-rm -rf ../openwrt/feeds/immortal/applications/{luci-app-ddns,luci-app-ddns-go,luci-app-shadowsocks-libev,luci-app-accesscontrol,luci-app-airplay2,luci-app-alist,luci-app-argon-config,luci-app-autoreboot,luci-app-cpufreq,luci-app-daed,luci-app-diskman,luci-app-eqos,luci-app-filebrowser,luci-app-mentohust,luci-app-netdata,luci-app-passwall,luci-app-qbittorrent,luci-app-ramfree,luci-app-socat,luci-app-unblockneteasemusic,luci-app-usb-printer,luci-app-vlmcsd,luci-app-zerotier}
+rm -rf ../openwrt/feeds/immortal/applications/{luci-app-aria2,luci-app-smartdns,luci-app-ddns,luci-app-ddns-go,luci-app-shadowsocks-libev,luci-app-accesscontrol,luci-app-airplay2,luci-app-alist,luci-app-argon-config,luci-app-autoreboot,luci-app-cpufreq,luci-app-daed,luci-app-diskman,luci-app-eqos,luci-app-filebrowser,luci-app-mentohust,luci-app-netdata,luci-app-passwall,luci-app-qbittorrent,luci-app-ramfree,luci-app-socat,luci-app-unblockneteasemusic,luci-app-usb-printer,luci-app-vlmcsd,luci-app-zerotier,luci-app-amule,luci-app-bitsrunlogin-go,luci-app-cpulimit,luci-app-dae,luci-app-dufs,luci-app-gost,luci-app-k3screenctrl,luci-app-minieap,luci-app-modemband,luci-app-msd_lite,luci-app-mwol,luci-app-n2n,luci-app-ngrokc,luci-app-njitclient,luci-app-nps,luci-app-oscam,luci-app-ps3netsrv,luci-app-scutclient,luci-app-spotifyd,luci-app-strongswan-swanctl,luci-app-sysuh3c,luci-app-udp2raw,luci-app-uugamebooster,luci-app-verysync}
 rm -rf ../openwrt/feeds/immortal/themes/luci-theme-argon
+rm -rf ../openwrt/feeds/immortal/protocols/{luci-proto-minieap,luci-proto-quectel}
+rm -rf ../openwrt/feeds/luci/applications/luci-app-smartdns
+rm -rf ../openwrt/feeds/packages/net/smartdns
+
+# smartdns
+git clone https://github.com/pymumu/openwrt-smartdns.git feeds/packages/net/smartdns
+git clone https://github.com/pymumu/luci-app-smartdns.git feeds/luci/applications/luci-app-smartdns
 
 # 安装 feeds
 [ "$(whoami)" = "runner" ] && group "feeds install -a"
@@ -421,7 +427,7 @@ else
     echo -e "\r\n${GREEN_COLOR}Building OpenWrt ...${RES}\r\n"
     sed -i "/BUILD_DATE/d" package/base-files/files/usr/lib/os-release
     sed -i "/BUILD_ID/aBUILD_DATE=\"$CURRENT_DATE\"" package/base-files/files/usr/lib/os-release
-    make -j1 V=s IGNORE_ERRORS="n m"
+    make -j$(nproc) V=w IGNORE_ERRORS="n m"
 fi
 
 # Compile time
@@ -431,7 +437,7 @@ end_seconds=$(date --date="$endtime" +%s);
 SEC=$((end_seconds-start_seconds));
 
 if [ "$platform" = "x86_64" ]; then
-    if [ -f bin/targets/x86/64*/*-ext4-combined-efi.img.gz ]; then
+    if [ -f bin/targets/x86/64*/*-squashfs-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         if [ "$ALL_KMODS" = y ]; then
