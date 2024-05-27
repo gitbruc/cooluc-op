@@ -10,6 +10,7 @@ CONFIG_LIBCURL_OPENSSL=y
 # CONFIG_LIBCURL_WOLFSSL is not set
 
 ###zidingyiapps
+CONFIG_PACKAGE_luci-app-onliner=y
 CONFIG_PACKAGE_luci-app-email=y
 CONFIG_PACKAGE_luci-app-eqosplus=y
 CONFIG_PACKAGE_luci-i18n-eqosplus-zh-cn=y
