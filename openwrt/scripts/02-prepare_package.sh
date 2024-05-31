@@ -93,8 +93,6 @@ git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 rm -rf package/new/helloworld/{luci-app-passwall,patch-luci-app-passwall.patch}
 git clone https://github.com/xiaorouji/openwrt-passwall.git package/new/helloworld/luci-app-passwall
 
-# autotimeset
-git clone https://github.com/sirpdboy/luci-app-autotimeset.git package/new/luci-app-autotimeset
 
 # ddns-go
 git clone https://$github/sirpdboy/luci-app-ddns-go package/new/ddnsgogo
