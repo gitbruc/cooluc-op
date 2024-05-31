@@ -465,7 +465,7 @@ if [ "$platform" = "x86_64" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://x86.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
+      "url": "https://x86.cooluc.com/d/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -484,7 +484,7 @@ EOF
         exit 1
     fi
 elif [ "$platform" = "armv8" ]; then
-    if [ -f bin/targets/armsr/armv8*/*-squashfs-combined.img.gz ]; then
+    if [ -f bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz ]; then
         echo -e "${GREEN_COLOR} Build success! ${RES}"
         echo -e " Build time: $(( SEC / 3600 ))h,$(( (SEC % 3600) / 60 ))m,$(( (SEC % 3600) % 60 ))s"
         if [ "$ALL_KMODS" = y ]; then
@@ -500,14 +500,14 @@ elif [ "$platform" = "armv8" ]; then
         if [ "$1" = "rc2" ]; then
             mkdir -p ota
             VERSION=$(sed 's/v//g' version.txt)
-            SHA256=$(sha256sum bin/targets/armsr/armv8*/*-squashfs-combined.img.gz | awk '{print $1}')
+            SHA256=$(sha256sum bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
             cat > ota/fw.json <<EOF
 {
   "armsr,armv8": [
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined.img.gz"
+      "url": "https://github.com/sbwml/builder/releases/download/v$VERSION/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
     }
   ]
 }
@@ -549,7 +549,7 @@ elif [ "$platform" = "bcm53xx" ]; then
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://r8500.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
+      "url": "https://r8500.cooluc.com/d/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-bcm53xx-generic-netgear_r8500-squashfs.chk"
     }
   ]
 }
@@ -592,7 +592,7 @@ else
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256",
-      "url": "https://r4s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
+      "url": "https://r4s.cooluc.com/d/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
@@ -606,14 +606,14 @@ EOF
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5C",
-      "url": "https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
+      "url": "https://r5s.cooluc.com/d/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
     }
   ],
   "friendlyarm,nanopi-r5s": [
     {
       "build_date": "$CURRENT_DATE",
       "sha256sum": "$SHA256_R5S",
-      "url": "https://r5s.cooluc.com/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
+      "url": "https://r5s.cooluc.com/d/$BUILD_TYPE/openwrt-23.05/v$VERSION/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
     }
   ]
 }
