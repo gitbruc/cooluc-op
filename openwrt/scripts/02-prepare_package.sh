@@ -93,6 +93,10 @@ git clone https://github.com/sbwml/package_new_nethogs package/new/nethogs
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 
+#passwall
+rm -rf package/new/helloworld/{luci-app-passwall,patch-luci-app-passwall.patch}
+git clone https://github.com/xiaorouji/openwrt-passwall.git package/new/helloworld/luci-app-passwall
+
 # autotimeset
 git clone https://github.com/sirpdboy/luci-app-autotimeset.git package/new/luci-app-autotimeset
 
