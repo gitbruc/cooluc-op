@@ -93,7 +93,6 @@ git clone https://$github/sbwml/openwrt_helloworld package/new/helloworld -b v5
 rm -rf package/new/helloworld/{luci-app-passwall,patch-luci-app-passwall.patch}
 git clone https://github.com/xiaorouji/openwrt-passwall.git package/new/helloworld/luci-app-passwall
 
-
 # ddns-go
 git clone https://$github/sirpdboy/luci-app-ddns-go package/new/ddnsgogo
 
@@ -103,6 +102,9 @@ git clone https://github.com/sirpdboy/luci-app-eqosplus.git package/new/luci-app
 # onliner
 git clone https://github.com/gitbruc/luci-onliner.git package/new/luci-app-onliner
  
+# luci-custom
+git clone https://github.com/gitbruc/luci-custom.git package/new/luci-custom
+
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
 git clone https://$github/sbwml/luci-app-daed-next package/new/daed-next
