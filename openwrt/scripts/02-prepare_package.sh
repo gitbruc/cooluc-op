@@ -102,9 +102,6 @@ git clone https://github.com/sirpdboy/luci-app-eqosplus.git package/new/luci-app
 # onliner
 git clone https://github.com/gitbruc/luci-onliner.git package/new/luci-app-onliner
  
-# luci-custom
-git clone https://github.com/gitbruc/luci-custom.git package/new/luci-custom
-
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
 git clone https://$github/sbwml/luci-app-daed-next package/new/daed-next
