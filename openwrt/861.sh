@@ -244,6 +244,3 @@ rm -rf ../openwrt/feeds/packages/net/smartdns
 # smartdns
 git clone https://github.com/pymumu/openwrt-smartdns.git feeds/packages/net/smartdns
 git clone https://github.com/pymumu/luci-app-smartdns.git feeds/luci/applications/luci-app-smartdns
-
-# luci-custom
-git clone https://github.com/gitbruc/luci-custom.git feeds/luci-custom
