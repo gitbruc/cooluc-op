@@ -105,9 +105,6 @@ git clone https://github.com/gitbruc/luci-onliner.git package/new/luci-app-onlin
 # luci-custom
 git clone https://github.com/gitbruc/luci-custom.git package/new/luci-custom
 
-# wechatpush
-git clone https://github.com/gitbruc/luci-app-wechatpush.git package/new/luci-app-wechatpush
-
 # DAED
 git clone https://$github/sbwml/luci-app-daed package/new/daed
 git clone https://$github/sbwml/luci-app-daed-next package/new/daed-next
