@@ -14,12 +14,20 @@ fi
 # config/Config-kernel.in patch
 curl -s https://$mirror/openwrt/patch/generic/0001-kernel-add-MODULE_ALLOW_BTF_MISMATCH-option.patch | patch -p1
 
+# tools: add upx tools
+mkdir -p tools/upx
+curl -s https://$mirror/openwrt/patch/upx/Makefile > tools/upx/Makefile
+sed -i "/tools-y += sstrip/atools-y += upx" tools/Makefile
+
 # rootfs: upx compression
 # include/rootfs.mk
 curl -s https://$mirror/openwrt/patch/generic/0002-rootfs-add-upx-compression-support.patch | patch -p1
 
 # kernel: Add support for llvm/clang compiler
 curl -s https://$mirror/openwrt/patch/generic/0003-kernel-Add-support-for-llvm-clang-compiler.patch | patch -p1
+
+# toolchain: Add libquadmath to the toolchain
+curl -s https://$mirror/openwrt/patch/generic/0004-libquadmath-Add-libquadmath-to-the-toolchain.patch | patch -p1
 
 # meson: add platform variable to cross-compilation file
 curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to-cross-compilation-file.patch | patch -p1
@@ -28,16 +36,8 @@ curl -s https://$mirror/openwrt/patch/generic/010-meson-add-platform-variable-to
 mkdir -p tools/dwarves/patches
 curl -s https://$mirror/openwrt/patch/openwrt-6.x/dwarves/100-btf_encoder-Fix-a-dwarf-type-DW_ATE_unsigned_1024-to-btf-encoding-issue.patch > tools/dwarves/patches/100-btf_encoder-Fix-a-dwarf-type-DW_ATE_unsigned_1024-to-btf-encoding-issue.patch
 
-# Fix x86 - CONFIG_ALL_KMODS
-if [ "$platform" = "x86_64" ]; then
-    sed -i 's/hwmon, +PACKAGE_kmod-thermal:kmod-thermal/hwmon/g' package/kernel/linux/modules/hwmon.mk
-fi
-
-# x86 - disable intel_pstate
-sed -i 's/noinitrd/noinitrd intel_pstate=disable/g' target/linux/x86/image/grub-efi.cfg
-
-# x86 - disable mitigations
-sed -i 's/intel_pstate=disable/intel_pstate=disable mitigations=off/g' target/linux/x86/image/grub-efi.cfg
+# x86 - disable intel_pstate & mitigations
+sed -i 's/noinitrd/noinitrd intel_pstate=disable mitigations=off/g' target/linux/x86/image/grub-efi.cfg
 
 # default LAN IP
 sed -i "s/192.168.1.1/$LAN/g" package/base-files/files/bin/config_generate
@@ -381,6 +381,13 @@ curl -s https://$mirror/openwrt/patch/luci/dhcp/dhcp.js > feeds/luci/modules/luc
 # ppp - 2.5.0
 rm -rf package/network/services/ppp
 git clone https://$github/sbwml/package_network_services_ppp package/network/services/ppp
+
+# odhcpd RFC-9096
+mkdir -p package/network/services/odhcpd/patches
+curl -s https://$mirror/openwrt/patch/odhcpd/001-odhcpd-RFC-9096-compliance.patch > package/network/services/odhcpd/patches/001-odhcpd-RFC-9096-compliance.patch
+pushd feeds/luci
+    curl -s https://$mirror/openwrt/patch/odhcpd/luci-mod-network-add-option-for-ipv6-max-plt-vlt.patch | patch -p1
+popd
 
 # urngd - 2020-01-21
 rm -rf package/system/urngd
